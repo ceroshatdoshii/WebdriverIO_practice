@@ -1,5 +1,4 @@
 const fsPromises = require("fs").promises;
-// const join = require("path");
 exports.config = {
   //
   // ====================
@@ -343,16 +342,6 @@ const RESULTS_FOLDER = "screenshots";
 
 function displayDateAndTimeWithTitle(test, stage) {
   const today = new Date();
-  // console.log(
-  //   `${today.getDate()}-${today.getMonth() + 1}-${today
-  //     .getFullYear()
-  //     .toString()
-  //     .slice(
-  //       -2
-  //     )} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()} Enter: ${
-  //     test.title
-  //   }`
-  // );
   fsPromises.writeFile(
     `${RESULTS_FOLDER}/data.txt`,
     `${today.getDate()}-${today.getMonth() + 1}-${today
