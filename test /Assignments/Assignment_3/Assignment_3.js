@@ -17,7 +17,7 @@ describe("Use the hooks feature provided by wdio and generate log file", async (
     console.log("Total number of book = " + totalLength);
     await expect(totalLength).to.be.equal(167);
   });
-  //Third test case passed
+  // Third test case passed
   it("list in array find last element ", async () => {
     await browser.url("https://jqueryui.com/");
     var element = await $$(".menu-item");

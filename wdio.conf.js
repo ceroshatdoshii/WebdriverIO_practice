@@ -1,3 +1,5 @@
+const fsPromises = require("fs").promises;
+// const join = require("path");
 exports.config = {
   //
   // ====================
@@ -91,7 +93,7 @@ exports.config = {
   // Define all options that are relevant for the WebdriverIO instance here
   //
   // Level of logging verbosity: trace | debug | info | warn | error | silent
-  logLevel: "info",
+  logLevel: "silent",
   //
   // Set specific log levels per logger
   // loggers:
@@ -247,8 +249,9 @@ exports.config = {
   /**
    * Function to be executed before a test (in Mocha/Jasmine) starts.
    */
-  // beforeTest: function (test, context) {
-  // },
+  beforeTest: function (test, context) {
+    displayDateAndTimeWithTitle(test, "Entry");
+  },
   /**
    * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
    * beforeEach in Mocha)
@@ -271,9 +274,21 @@ exports.config = {
    * @param {Boolean} result.passed    true if test has passed, otherwise false
    * @param {Object}  result.retries   informations to spec related retries, e.g. `{ attempts: 0, limit: 0 }`
    */
-  // afterTest: function(test, context, { error, result, duration, passed, retries }) {
-  // },
 
+  afterTest: function (
+    test,
+    context,
+    { error, result, duration, passed, retries }
+  ) {
+    displayDateAndTimeWithTitle(test, "Exit");
+    const f = async () => {
+      if (passed === false) {
+        await browser.saveScreenshot(`${RESULTS_FOLDER}/${test.title}.png`);
+      }
+    };
+
+    return f();
+  },
   /**
    * Hook that gets executed after the suite has ended
    * @param {Object} suite suite details
@@ -324,3 +339,30 @@ exports.config = {
   // onReload: function(oldSessionId, newSessionId) {
   // }
 };
+const RESULTS_FOLDER = "screenshots";
+
+function displayDateAndTimeWithTitle(test, stage) {
+  const today = new Date();
+  // console.log(
+  //   `${today.getDate()}-${today.getMonth() + 1}-${today
+  //     .getFullYear()
+  //     .toString()
+  //     .slice(
+  //       -2
+  //     )} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()} Enter: ${
+  //     test.title
+  //   }`
+  // );
+  fsPromises.writeFile(
+    `${RESULTS_FOLDER}/data.txt`,
+    `${today.getDate()}-${today.getMonth() + 1}-${today
+      .getFullYear()
+      .toString()
+      .slice(
+        -2
+      )} ${today.getHours()}:${today.getMinutes()}:${today.getSeconds()} ${stage}: ${
+      test.title
+    }\n`,
+    { flag: "a+" }
+  );
+}
